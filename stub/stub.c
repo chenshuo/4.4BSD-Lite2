@@ -15,12 +15,16 @@
 #include <sys/ioctl.h>
 #include <sys/protosw.h>
 #include <sys/domain.h>
+#include <sys/signalvar.h>
 #include <sys/socket.h>
 #include <sys/socketvar.h>
 
 #include <net/if.h>
 
 #include <vm/vm_param.h>
+
+extern void exit(int) __attribute__ ((__noreturn__));
+extern int gettimeofday(struct timeval *, void*);
 
 int splnet(void)
 {
@@ -51,8 +55,8 @@ void ovbcopy(const void *src, void *dest, size_t n)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int hz = 100;
-struct  proc *curproc = NULL;
+int	hz = 100;
+struct	proc *curproc = NULL;
 
 //////////////////////////////////////////////////////////////////////////////
 // sys/i386/i386/machdep.c

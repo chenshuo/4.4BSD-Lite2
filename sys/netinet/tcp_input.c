@@ -43,7 +43,7 @@
 #include <sys/socketvar.h>
 #include <sys/errno.h>
 
-#include <machine/cpu.h>	/* before tcp_seq.h, for tcp_random18() */
+//#include <machine/cpu.h>	/* before tcp_seq.h, for tcp_random18() */
 
 #include <net/if.h>
 #include <net/route.h>

@@ -101,9 +101,13 @@ extern int nsysent;
 
 extern int boothowto;		/* reboot flags, from console subsystem */
 
+struct prochd;
+void _insque(struct prochd *element, struct prochd *head);
+void _remque(struct prochd *element);
+
 /* casts to keep lint happy */
-#define	insque(q,p)	_insque((caddr_t)q,(caddr_t)p)
-#define	remque(q)	_remque((caddr_t)q)
+#define	insque(q,p)	_insque((void*)q,(void*)p)
+#define	remque(q)	_remque((void*)q)
 
 /*
  * General function declarations.

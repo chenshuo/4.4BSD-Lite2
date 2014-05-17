@@ -46,6 +46,7 @@
 #include <net/if.h>
 #include <net/if_dl.h>
 #include <net/if_types.h>
+#include <net/radix.h>
 
 int	ifqmaxlen = IFQ_MAXLEN;
 void	if_slowtimo __P((void *arg));
@@ -85,7 +86,7 @@ ifubareset(uban)
 
 int if_index = 0;
 struct ifaddr **ifnet_addrs;
-static char *sprint_d __P((u_int, char *, int));
+// static char *sprint_d __P((u_int, char *, int));  // TCPv2
 
 /*
  * Attach an interface to the
@@ -661,7 +662,6 @@ ifconf(cmd, data)
 	ifc->ifc_len -= space;
 	return (error);
 }
-#endif  // TCPv2
 
 static char *
 sprint_d(n, buf, buflen)
@@ -679,3 +679,4 @@ sprint_d(n, buf, buflen)
 	} while (n != 0);
 	return (cp);
 }
+#endif  // TCPv2

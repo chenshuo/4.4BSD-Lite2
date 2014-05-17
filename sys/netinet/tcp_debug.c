@@ -131,7 +131,7 @@ tcp_trace(act, ostate, tp, ti, req)
 		if (flags) {
 #ifndef lint
 			char *cp = "<";
-#define pf(f) { if (ti->ti_flags&TH_/**/f) { printf("%s%s", cp, "f"); cp = ","; } }
+#define pf(f) { if (ti->ti_flags&TH_##f) { printf("%s%s", cp, #f); cp = ","; } }
 			pf(SYN); pf(ACK); pf(FIN); pf(RST); pf(PUSH); pf(URG);
 #endif
 			printf(">");

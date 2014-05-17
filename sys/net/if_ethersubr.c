@@ -308,8 +308,10 @@ ether_input(ifp, eh, m)
 	struct mbuf *m;
 {
 	register struct ifqueue *inq;
+#ifdef	ISO
 	register struct llc *l;
 	struct arpcom *ac = (struct arpcom *)ifp;
+#endif
 	int s;
 
 	if ((ifp->if_flags & IFF_UP) == 0) {
@@ -466,7 +468,7 @@ char *
 ether_sprintf(ap)
 	register u_char *ap;
 {
-	register i;
+	register int i;
 	static char etherbuf[18];
 	register char *cp = etherbuf;
 

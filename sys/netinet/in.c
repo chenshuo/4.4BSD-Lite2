@@ -34,6 +34,7 @@
  */
 
 #include <sys/param.h>
+#include <sys/systm.h>
 #include <sys/ioctl.h>
 #include <sys/errno.h>
 #include <sys/malloc.h>
@@ -47,6 +48,9 @@
 #include <netinet/in.h>
 #include <netinet/in_var.h>
 #include <netinet/if_ether.h>
+#include <netinet/igmp_var.h>
+#include <netinet/ip.h>
+#include <netinet/ip_var.h>
 
 #ifdef INET
 /*
@@ -91,6 +95,7 @@ int subnetsarelocal = SUBNETSARELOCAL;
  * is true, this includes other subnets of the local net.
  * Otherwise, it includes only the directly-connected (sub)nets.
  */
+int
 in_localaddr(in)
 	struct in_addr in;
 {
@@ -114,6 +119,7 @@ in_localaddr(in)
  * that may not be forwarded, or whether datagrams to that destination
  * may be forwarded.
  */
+int
 in_canforward(in)
 	struct in_addr in;
 {
@@ -156,6 +162,7 @@ extern	struct ifnet loif;
  * Ifp is 0 if not an interface-specific ioctl.
  */
 /* ARGSUSED */
+int
 in_control(so, cmd, data, ifp)
 	struct socket *so;
 	u_long cmd;
@@ -395,6 +402,7 @@ in_ifscrub(ifp, ia)
  * Initialize an interface's internet address
  * and routing table entry.
  */
+int
 in_ifinit(ifp, ia, sin, scrub)
 	register struct ifnet *ifp;
 	register struct in_ifaddr *ia;
@@ -483,6 +491,7 @@ in_ifinit(ifp, ia, sin, scrub)
 /*
  * Return 1 if the address might be a local broadcast address.
  */
+int
 in_broadcast(in, ifp)
 	struct in_addr in;
         struct ifnet *ifp;
@@ -584,7 +593,7 @@ in_addmulti(ap, ifp)
 /*
  * Delete a multicast address record.
  */
-int
+void
 in_delmulti(inm)
 	register struct in_multi *inm;
 {

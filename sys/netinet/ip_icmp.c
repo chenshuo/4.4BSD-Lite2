@@ -49,8 +49,11 @@
 #include <netinet/in_systm.h>
 #include <netinet/in_var.h>
 #include <netinet/ip.h>
+#include <netinet/ip_var.h>
 #include <netinet/ip_icmp.h>
 #include <netinet/icmp_var.h>
+
+void pfctlinput(int cmd, struct sockaddr *sa);
 
 /*
  * ICMP routines: error generation, receive packet processing, and

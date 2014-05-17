@@ -150,6 +150,11 @@
 #define	DELAY(n)	{ register int N = (n); while (--N > 0); }
 #endif
 
+int splnet();
+int splimp();
+void splx(int);
+int sysctl_int __P((void *, size_t *, void *, size_t, int *));
+
 #ifndef _SIMPLELOCK_H_
 #define _SIMPLELOCK_H_
 /*

@@ -274,7 +274,7 @@ in_pcbconnect(inp, nam)
 	return (0);
 }
 
-int
+void
 in_pcbdisconnect(inp)
 	struct inpcb *inp;
 {
@@ -285,7 +285,7 @@ in_pcbdisconnect(inp)
 		in_pcbdetach(inp);
 }
 
-int
+void
 in_pcbdetach(inp)
 	struct inpcb *inp;
 {
@@ -302,7 +302,7 @@ in_pcbdetach(inp)
 	FREE(inp, M_PCB);
 }
 
-int
+void
 in_setsockaddr(inp, nam)
 	register struct inpcb *inp;
 	struct mbuf *nam;
@@ -318,7 +318,7 @@ in_setsockaddr(inp, nam)
 	sin->sin_addr = inp->inp_laddr;
 }
 
-int
+void
 in_setpeeraddr(inp, nam)
 	struct inpcb *inp;
 	struct mbuf *nam;
@@ -345,7 +345,7 @@ in_setpeeraddr(inp, nam)
  *
  * Must be called at splnet.
  */
-int
+void
 in_pcbnotify(head, dst, fport_arg, laddr, lport_arg, cmd, notify)
 	struct inpcb *head;
 	struct sockaddr *dst;
@@ -403,7 +403,7 @@ in_pcbnotify(head, dst, fport_arg, laddr, lport_arg, cmd, notify)
  * routing information.  If the route was created dynamically
  * (by a redirect), time to try a default gateway again.
  */
-int
+void
 in_losing(inp)
 	struct inpcb *inp;
 {
