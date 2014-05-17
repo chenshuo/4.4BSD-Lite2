@@ -84,7 +84,7 @@ static	struct llinfo_arp *arplookup __P((u_long, int, int));
 static	void in_arpinput __P((struct mbuf *));
 
 extern	struct ifnet loif;
-extern	struct timeval time;
+// extern struct timeval time;
 struct	llinfo_arp llinfo_arp = {&llinfo_arp, &llinfo_arp};
 struct	ifqueue arpintrq = {0, 0, 0, 50};
 int	arp_inuse, arp_allocated, arp_intimer;

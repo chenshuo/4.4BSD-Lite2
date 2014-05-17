@@ -44,7 +44,7 @@
 #include <sys/errno.h>
 #include <sys/syslog.h>
 
-#include <machine/cpu.h>
+// #include <machine/cpu.h>
 
 #include <net/if.h>
 #include <net/netisr.h>

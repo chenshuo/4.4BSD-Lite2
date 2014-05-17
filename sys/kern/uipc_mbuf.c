@@ -385,7 +385,7 @@ m_adj(mp, req_len)
 {
 	register int len = req_len;
 	register struct mbuf *m;
-	register count;
+	register int count;
 
 	if ((m = mp) == NULL)
 		return;

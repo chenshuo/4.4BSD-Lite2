@@ -231,6 +231,6 @@ pv_entry_t	pv_table;		/* array of entries, one per page */
 #define	pmap_resident_count(pmap)	((pmap)->pm_stats.resident_count)
 #define	pmap_wired_count(pmap)		((pmap)->pm_stats.wired_count)
 
-#endif	KERNEL
+#endif	// KERNEL
 
-#endif	_PMAP_MACHINE_
+#endif	// _PMAP_MACHINE_

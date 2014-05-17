@@ -91,6 +91,7 @@ static char *sprint_d __P((u_int, char *, int));
  * Attach an interface to the
  * list of "active" interfaces.
  */
+#if 0  // TCPv2
 void
 if_attach(ifp)
 	struct ifnet *ifp;
@@ -159,6 +160,7 @@ if_attach(ifp)
 	if (ifp->if_output == ether_output)
 		ether_ifattach(ifp);
 }
+#endif  // TCPv2
 /*
  * Locate an interface based on a complete address.
  */
@@ -338,6 +340,7 @@ link_rtrequest(cmd, rt, sa)
  * the transition.
  * NOTE: must be called at splnet or eqivalent.
  */
+#if 0  // TCPv2
 void
 if_down(ifp)
 	register struct ifnet *ifp;
@@ -350,12 +353,14 @@ if_down(ifp)
 	if_qflush(&ifp->if_snd);
 	rt_ifmsg(ifp);
 }
+#endif  // TCPv2
 
 /*
  * Mark an interface up and notify protocols of
  * the transition.
  * NOTE: must be called at splnet or eqivalent.
  */
+#if 0  // TCPv2
 void
 if_up(ifp)
 	register struct ifnet *ifp;
@@ -370,6 +375,7 @@ if_up(ifp)
 #endif
 	rt_ifmsg(ifp);
 }
+#endif  // TCPv2
 
 /*
  * Flush an interface queue.
@@ -455,6 +461,7 @@ ifunit(name)
 /*
  * Interface ioctls.
  */
+#if 0  // TCPv2
 int
 ifioctl(so, cmd, data, p)
 	struct socket *so;
@@ -579,6 +586,7 @@ ifioctl(so, cmd, data, p)
 	}
 	return (0);
 }
+#endif  // TCPv2
 
 /*
  * Return interface configuration
@@ -587,6 +595,7 @@ ifioctl(so, cmd, data, p)
  * other information.
  */
 /*ARGSUSED*/
+#if 0  // TCPv2
 int
 ifconf(cmd, data)
 	int cmd;
@@ -652,6 +661,7 @@ ifconf(cmd, data)
 	ifc->ifc_len -= space;
 	return (error);
 }
+#endif  // TCPv2
 
 static char *
 sprint_d(n, buf, buflen)

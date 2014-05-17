@@ -119,7 +119,7 @@ void	*hashinit __P((int count, int type, u_long *hashmask));
 int	nosys __P((struct proc *, void *, register_t *));
 
 #ifdef __GNUC__
-volatile void	panic __P((const char *, ...));
+void	panic __P((const char *, ...));
 #else
 void	panic __P((const char *, ...));
 #endif

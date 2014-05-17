@@ -62,8 +62,8 @@ domaininit()
 
 #undef unix
 #ifndef lint
-	ADDDOMAIN(unix);
-	ADDDOMAIN(route);
+	// ADDDOMAIN(unix);
+	// ADDDOMAIN(route);
 #ifdef INET
 	ADDDOMAIN(inet);
 #endif
