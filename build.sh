@@ -3,7 +3,7 @@
 set -x
 
 CC="gcc -g3 -Wall -Wno-parentheses -O0 -m32 -nostdinc -fno-builtin "
-CC="$CC -DKERNEL -DINET -DTCPDEBUG -I sys -I sys/sys"
+CC="$CC -DKERNEL -DINET -DTCPDEBUG -I sys "
 
 mkdir -p objs
 rm -rf objs/*.o
