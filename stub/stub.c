@@ -18,6 +18,7 @@
 #include <sys/socketvar.h>
 
 #include <net/if.h>
+#include <netinet/in.h>
 
 #include <vm/vm.h>
 #include <vm/vm_kern.h>
@@ -69,7 +70,10 @@ void ovbcopy(const void *src, void *dest, size_t n)
 #define HZ 100
 int hz = HZ;
 int tick = 1000000 / HZ;
-struct	proc *curproc = NULL;
+struct	proc proc0;
+struct	proc *curproc = &proc0;
+struct	pcred cred0;
+struct	ucred ucred0;
 
 //////////////////////////////////////////////////////////////////////////////
 // sys/i386/i386/machdep.c
@@ -139,7 +143,7 @@ timeout(ftn, arg, ticks)
 	void *arg;
 	register int ticks;
 {
-  // FIXME
+	// FIXME
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -184,8 +188,8 @@ tsleep(ident, priority, wmesg, timo)
 	int priority, timo;
 	char *wmesg;
 {
-  // FIXME
-  return 0;
+	// FIXME
+	return 0;
 }
 
 /*
@@ -284,22 +288,6 @@ selwakeup(sip)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// sys/net/if_loop.c
-//////////////////////////////////////////////////////////////////////////////
-struct	ifnet loif;
-
-int
-looutput(ifp, m, dst, rt)
-	struct ifnet *ifp;
-	register struct mbuf *m;
-	struct sockaddr *dst;
-	register struct rtentry *rt;
-{
-  // FIXME
-  return 0;
-}
-
-//////////////////////////////////////////////////////////////////////////////
 // sys/net/rtsock.c
 //////////////////////////////////////////////////////////////////////////////
 /*
@@ -313,7 +301,18 @@ rt_missmsg(type, rtinfo, flags, error)
 	int type, flags, error;
 	register struct rt_addrinfo *rtinfo;
 {
-  // FIXME
+	// FIXME
+}
+
+/*
+ * This routine is called to generate a message from the routing
+ * socket indicating that the status of a network interface has changed.
+ */
+void
+rt_ifmsg(ifp)
+	register struct ifnet *ifp;
+{
+	// FIXME
 }
 
 /*
@@ -363,7 +362,29 @@ kmem_malloc(map, size, canwait)
 	boolean_t		canwait;
 {
 	if (map != mb_map)
-		panic("kmem_malloc: known map");
+		panic("kmem_malloc: unknown map");
 	return malloc(size);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void setloopback()
+{
+  curproc->p_cred = &cred0;
+  curproc->p_ucred = &ucred0;
+
+  //int fd = socket(AF_INET, SOCK_DGRAM, 0);
+  struct ifreq req;
+  bzero(&req, sizeof req);
+  strcpy(req.ifr_name, "lo0");
+  struct sockaddr_in loaddr;
+  bzero(&loaddr, sizeof loaddr);
+  loaddr.sin_len = sizeof loaddr;
+  loaddr.sin_family = AF_INET;
+  loaddr.sin_addr.s_addr = htonl(0x7f000001);
+  bcopy(&loaddr, &req.ifr_addr, sizeof loaddr);
+  struct socket* so = NULL;
+  socreate(AF_INET, &so, SOCK_DGRAM, 0);
+  ifioctl(so, SIOCSIFADDR, (caddr_t)&req, NULL);
+
+  sofree(so);
+}
