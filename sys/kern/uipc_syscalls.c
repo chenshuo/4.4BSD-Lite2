@@ -42,8 +42,10 @@
 #include <sys/malloc.h>
 #include <sys/mbuf.h>
 #include <sys/protosw.h>
+#include <sys/signalvar.h>
 #include <sys/socket.h>
 #include <sys/socketvar.h>
+#include <sys/un.h>
 #ifdef KTRACE
 #include <sys/ktrace.h>
 #endif
@@ -59,6 +61,15 @@
 #endif
 
 extern	struct fileops socketops;
+
+// kern_descrip.c
+void ffree(struct file *);
+
+// this file
+int getsock(struct filedesc *, int, struct file **);
+int sockargs(struct mbuf **, caddr_t, int, int);
+int sendit(struct proc *, int, struct msghdr *, int, register_t*);
+int recvit(struct proc *, int, struct msghdr *, caddr_t, register_t*);
 
 int
 socket(p, uap, retval)

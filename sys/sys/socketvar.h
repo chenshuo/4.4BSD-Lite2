@@ -235,7 +235,7 @@ int	soconnect __P((struct socket *so, struct mbuf *nam));
 int	soconnect2 __P((struct socket *so1, struct socket *so2));
 int	socreate __P((int dom, struct socket **aso, int type, int proto));
 int	sodisconnect __P((struct socket *so));
-int	sofree __P((struct socket *so));
+void	sofree __P((struct socket *so));
 int	sogetopt __P((struct socket *so, int level, int optname,
 	    struct mbuf **mp));
 void	sohasoutofband __P((struct socket *so));

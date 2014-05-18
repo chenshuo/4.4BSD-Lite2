@@ -10,8 +10,6 @@
 #include <sys/file.h>
 #include <ufs/ufs/quota.h>
 #include <sys/uio.h>
-#include <sys/malloc.h>
-#include <sys/mbuf.h>
 #include <sys/ioctl.h>
 #include <sys/protosw.h>
 #include <sys/domain.h>
@@ -21,7 +19,8 @@
 
 #include <net/if.h>
 
-#include <vm/vm_param.h>
+#include <vm/vm.h>
+#include <vm/vm_kern.h>
 
 extern void exit(int) __attribute__ ((__noreturn__));
 extern int gettimeofday(struct timeval *, void*);
@@ -43,6 +42,16 @@ void splx(int x)
 	// FIXME
 }
 
+int subyte(void *base, int byte)
+{
+	return 0;
+}
+
+int suibyte(void *base, int byte)
+{
+	return 0;
+}
+
 void microtime(tvp)
 	register struct timeval *tvp;
 {
@@ -55,7 +64,11 @@ void ovbcopy(const void *src, void *dest, size_t n)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int	hz = 100;
+// sys/conf/param.c
+//////////////////////////////////////////////////////////////////////////////
+#define HZ 100
+int hz = HZ;
+int tick = 1000000 / HZ;
 struct	proc *curproc = NULL;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -323,8 +336,9 @@ rt_newaddrmsg(cmd, ifa, error, rt)
 //////////////////////////////////////////////////////////////////////////////
 // sys/vm/vm_kern.c
 //////////////////////////////////////////////////////////////////////////////
-typedef struct vm_map *vm_map_t;
-vm_map_t        mb_map;
+
+struct vm_map mb_map_0;
+vm_map_t	mb_map = &mb_map_0;
 
 /*
  * Allocate wired-down memory in the kernel's address map for the higher
@@ -348,75 +362,8 @@ kmem_malloc(map, size, canwait)
 	register vm_size_t	size;
 	boolean_t		canwait;
 {
-	// FIXME
-	return 0;
+	if (map != mb_map)
+		panic("kmem_malloc: known map");
+	return malloc(size);
 }
 
-// TEMP kern/uipc_socket.c
-// FIXME:
-
-int
-sofree(so)
-	register struct socket *so;
-{
-
-	if (so->so_pcb || (so->so_state & SS_NOFDREF) == 0)
-		return -1;
-	if (so->so_head) {
-		if (!soqremque(so, 0) && !soqremque(so, 1))
-			panic("sofree dq");
-		so->so_head = 0;
-	}
-	sbrelease(&so->so_snd);
-	sorflush(so);
-	FREE(so, M_SOCKET);
-	return 0;
-}
-
-void
-sorflush(so)
-	register struct socket *so;
-{
-	register struct sockbuf *sb = &so->so_rcv;
-	register struct protosw *pr = so->so_proto;
-	register int s;
-	struct sockbuf asb;
-
-	sb->sb_flags |= SB_NOINTR;
-	(void) sblock(sb, M_WAITOK);
-	s = splimp();
-	socantrcvmore(so);
-	sbunlock(sb);
-	asb = *sb;
-	bzero((caddr_t)sb, sizeof (*sb));
-	splx(s);
-	if (pr->pr_flags & PR_RIGHTS && pr->pr_domain->dom_dispose)
-		(*pr->pr_domain->dom_dispose)(asb.sb_mb);
-	sbrelease(&asb);
-}
-
-/*
- * Must be called at splnet...
- */
-int
-soabort(so)
-	struct socket *so;
-{
-
-	return (
-	    (*so->so_proto->pr_usrreq)(so, PRU_ABORT,
-		(struct mbuf *)0, (struct mbuf *)0, (struct mbuf *)0));
-}
-
-void
-sohasoutofband(so)
-	register struct socket *so;
-{
-	struct proc *p;
-
-	if (so->so_pgid < 0)
-		gsignal(-so->so_pgid, SIGURG);
-	else if (so->so_pgid > 0 && (p = pfind(so->so_pgid)) != 0)
-		psignal(p, SIGURG);
-	selwakeup(&so->so_rcv.sb_sel);
-}

@@ -8,12 +8,17 @@ CC="$CC -DKERNEL -DINET -DTCPDEBUG -I sys "
 mkdir -p objs
 rm -rf objs/*.o
 
+$CC -c sys/kern/kern_subr.c -o objs/kern_subr.o
 $CC -c sys/kern/uipc_domain.c -o objs/uipc_domain.o
 $CC -c sys/kern/uipc_mbuf.c -o objs/uipc_mbuf.o
+$CC -c sys/kern/uipc_socket.c -o objs/uipc_socket.o
 $CC -c sys/kern/uipc_socket2.c -o objs/uipc_socket2.o
+$CC -c sys/kern/uipc_syscalls.c -o objs/uipc_syscalls.o
+$CC -c sys/kern/sys_socket.c -o objs/sys_socket.o
 
 $CC -c sys/net/if.c -o objs/if.o
 $CC -c sys/net/if_ethersubr.c -o objs/if_ethersubr.o
+$CC -c sys/net/if_loop.c -o objs/if_loop.o
 $CC -c sys/net/radix.c -o objs/radix.o
 $CC -c sys/net/route.c -o objs/route.o
 

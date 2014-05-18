@@ -1,5 +1,10 @@
 int main()
 {
-	domaininit();
+  mbinit();
+
+  int s = splimp();
+  ifinit();
+  domaininit();
+  splx(s);
   return 0;
 }

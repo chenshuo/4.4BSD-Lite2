@@ -42,9 +42,12 @@
 #include <sys/domain.h>
 #include <sys/kernel.h>
 #include <sys/protosw.h>
+#include <sys/signalvar.h>
 #include <sys/socket.h>
 #include <sys/socketvar.h>
 #include <sys/resourcevar.h>
+
+int uiomove(caddr_t, int, struct uio *);
 
 /*
  * Socket operation routines.
@@ -129,7 +132,7 @@ solisten(so, backlog)
 	return (0);
 }
 
-int
+void
 sofree(so)
 	register struct socket *so;
 {

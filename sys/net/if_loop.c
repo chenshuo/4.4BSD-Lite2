@@ -45,7 +45,7 @@
 #include <sys/errno.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
-#include <machine/cpu.h>
+// #include <machine/cpu.h>
 
 #include <net/if.h>
 #include <net/if_types.h>
