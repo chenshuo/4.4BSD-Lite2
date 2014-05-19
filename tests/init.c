@@ -1,15 +1,8 @@
 int main()
 {
-  loopattach(1);
-  mbinit();
-
-  int s = splimp();
-  ifinit();
-  domaininit();
-  route_init();
-  splx(s);
-  setloopback();
+  init();
 
   ping();
+  handshake();
   return 0;
 }

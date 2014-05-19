@@ -22,6 +22,8 @@
 #include <netinet/in.h>
 #include <netinet/in_var.h>
 
+void ipintr();
+
 void ping()
 {
   // An ICMP echo request, sending from 127.0.0.1 to 127.0.0.1

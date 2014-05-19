@@ -368,26 +368,3 @@ kmem_malloc(map, size, canwait)
 	return malloc(size);
 }
 
-//////////////////////////////////////////////////////////////////////////////
-void setloopback()
-{
-  curproc->p_cred = &cred0;
-  curproc->p_ucred = &ucred0;
-
-  //int fd = socket(AF_INET, SOCK_DGRAM, 0);
-  struct ifreq req;
-  bzero(&req, sizeof req);
-  strcpy(req.ifr_name, "lo0");
-  struct sockaddr_in loaddr;
-  bzero(&loaddr, sizeof loaddr);
-  loaddr.sin_len = sizeof loaddr;
-  loaddr.sin_family = AF_INET;
-  loaddr.sin_addr.s_addr = htonl(0x7f000001);
-  bcopy(&loaddr, &req.ifr_addr, sizeof loaddr);
-  struct socket* so = NULL;
-  socreate(AF_INET, &so, SOCK_DGRAM, 0);
-  // ifconfig lo0 127.0.0.1
-  ifioctl(so, SIOCSIFADDR, (caddr_t)&req, curproc);
-
-  sofree(so);
-}
