@@ -365,6 +365,7 @@ extern	int mbtypes[];			/* XXX */
 
 struct	mbuf *m_copym __P((struct mbuf *, int, int, int));
 struct	mbuf *m_free __P((struct mbuf *));
+struct  mbuf *m_devget __P((char *, int, int, struct ifnet *, void(*)()));
 struct	mbuf *m_get __P((int, int));
 struct	mbuf *m_getclr __P((int, int));
 struct	mbuf *m_gethdr __P((int, int));

@@ -5,7 +5,7 @@ User-land TCP/IP protocol from 4.4BSD-Lite2, a companion of W. Richard Stevens's
 
 This is not a fork of https://github.com/sergev/4.4BSD-Lite2, which contains the whole 4.4BSD-Lite2.tar.gz.  This repository only contains usr/src/sys of the tarball, ie. the kernel source.
 
-This TCP/IP stack is alive, using tap/tun device on Linux.
+This TCP/IP stack is alive, using tap/tun device on Linux. (WIP)
 
 # See also
 For running recent FreeBSD TCP/IP stack in user mode, take a look at https://github.com/pkelsey/libuinet and https://github.com/cloudius-systems/osv.

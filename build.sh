@@ -6,7 +6,7 @@ CC="gcc -g3 -Wall -Wno-parentheses -O0 -m32 -nostdinc -fno-builtin "
 CC="$CC -DKERNEL -DINET -DTCPDEBUG -I sys "
 
 mkdir -p objs
-rm -rf objs/*.o
+rm -rf objs/*.o objs/*.a
 
 $CC -c sys/kern/kern_subr.c -o objs/kern_subr.o
 $CC -c sys/kern/uipc_domain.c -o objs/uipc_domain.o
@@ -43,7 +43,8 @@ $CC -c sys/netinet/tcp_usrreq.c -o objs/tcp_usrreq.o
 
 $CC -c sys/netinet/udp_usrreq.c -o objs/udp_usrreq.o
 
-$CC -c stub/stub.c -o objs/stub.o
+$CC -c lib/ping.c -o objs/ping.o
+$CC -c lib/stub.c -o objs/stub.o
 
 ar rcs objs/libnetinet.a objs/*.o
 

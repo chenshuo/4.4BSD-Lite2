@@ -137,6 +137,8 @@ int copyin(void* from, void* to, u_int len)
  *	value is returned from timeout, rather, the original arguments
  *	to timeout are used to identify entries for untimeout.
  */
+volatile struct	timeval time;
+
 void
 timeout(ftn, arg, ticks)
 	void (*ftn) __P((void *));
@@ -384,7 +386,8 @@ void setloopback()
   bcopy(&loaddr, &req.ifr_addr, sizeof loaddr);
   struct socket* so = NULL;
   socreate(AF_INET, &so, SOCK_DGRAM, 0);
-  ifioctl(so, SIOCSIFADDR, (caddr_t)&req, NULL);
+  // ifconfig lo0 127.0.0.1
+  ifioctl(so, SIOCSIFADDR, (caddr_t)&req, curproc);
 
   sofree(so);
 }
