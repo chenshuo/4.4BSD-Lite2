@@ -93,3 +93,6 @@
 #define	IFT_SMDSICIP	0x34		/* SMDS InterCarrier Interface */
 #define	IFT_PROPVIRTUAL	0x35		/* Proprietary Virtual/internal */
 #define	IFT_PROPMUX	0x36		/* Proprietary Multiplexing */
+#define	IFT_PIGEON	0x37		/* RFC 1149 */
+#define	IFT_TAP		0x38
+#define	IFT_TUN		0x39
