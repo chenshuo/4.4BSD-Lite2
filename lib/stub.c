@@ -149,6 +149,41 @@ timeout(ftn, arg, ticks)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// sys/kern/kern_malloc.c
+//////////////////////////////////////////////////////////////////////////////
+#undef malloc
+#undef free
+extern void *malloc (size_t __size);
+extern void *memalign (size_t __alignment, size_t __size);
+extern void free (void *__ptr);
+
+/*
+ * Allocate a block of memory
+ */
+void *
+xmalloc(size, type, flags)
+	unsigned long size;
+	int type, flags;
+{
+	// mbuf requires 128-byte alignment
+	if (size > 8 && (size & (size-1)) == 0)
+		return memalign(size, size);
+	else
+		return malloc(size);
+}
+
+/*
+ * Free a block of memory allocated by malloc.
+ */
+void
+xfree(addr, type)
+	void *addr;
+	int type;
+{
+	return free(addr);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 // sys/kern/kern_prot.c
 //////////////////////////////////////////////////////////////////////////////
 /*
@@ -190,7 +225,8 @@ tsleep(ident, priority, wmesg, timo)
 	int priority, timo;
 	char *wmesg;
 {
-	// FIXME
+	printf("tsleep\n");
+	exit(1);
 	return 0;
 }
 
@@ -367,4 +403,3 @@ kmem_malloc(map, size, canwait)
 		panic("kmem_malloc: unknown map");
 	return malloc(size);
 }
-

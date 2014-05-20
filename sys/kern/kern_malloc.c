@@ -363,6 +363,7 @@ free(addr, type)
 /*
  * Initialize the kernel memory allocator
  */
+void
 kmeminit()
 {
 	register long indx;
