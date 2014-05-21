@@ -6,14 +6,14 @@ CC="gcc -g3 -Wall -Wno-parentheses -O0 -m32 -nostdinc -fno-builtin "
 CC="$CC -DKERNEL -DINET -DTCPDEBUG -I sys "
 
 mkdir -p objs
-rm -rf objs/*.o objs/*.a
+rm -rf objs/*.o objs/*.a objs/test_*
 
 $CC -c sys/kern/kern_subr.c -o objs/kern_subr.o
 $CC -c sys/kern/uipc_domain.c -o objs/uipc_domain.o
 $CC -c sys/kern/uipc_mbuf.c -o objs/uipc_mbuf.o
 $CC -c sys/kern/uipc_socket.c -o objs/uipc_socket.o
 $CC -c sys/kern/uipc_socket2.c -o objs/uipc_socket2.o
-$CC -c sys/kern/uipc_syscalls.c -o objs/uipc_syscalls.o
+#$CC -c sys/kern/uipc_syscalls.c -o objs/uipc_syscalls.o
 $CC -c sys/kern/sys_socket.c -o objs/sys_socket.o
 
 $CC -c sys/net/if.c -o objs/if.o
@@ -45,6 +45,7 @@ $CC -c sys/netinet/udp_usrreq.c -o objs/udp_usrreq.o
 
 $CC -c lib/handshake.c -o objs/handshake.o
 $CC -c lib/if_pigeon.c -o objs/if_pigeon.o
+$CC -c lib/if_tun.c -o objs/if_tun.o
 $CC -c lib/init.c -o objs/init.o
 $CC -c lib/ping.c -o objs/ping.o
 $CC -c lib/stub.c -o objs/stub.o
@@ -53,3 +54,4 @@ ar rcs objs/libnetinet.a objs/*.o
 
 gcc -m32 -g -Wall tests/init.c -o objs/test_init objs/libnetinet.a
 gcc -m32 -g -Wall tests/pigeon.c -o objs/test_pigeon objs/libnetinet.a
+gcc -m32 -g -Wall tests/tun.c -o objs/test_tun objs/libnetinet.a

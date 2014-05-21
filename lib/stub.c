@@ -26,6 +26,11 @@
 extern void exit(int) __attribute__ ((__noreturn__));
 extern int gettimeofday(struct timeval *, void*);
 
+void updatetime()
+{
+	microtime((struct timeval *)&time);
+}
+
 int splnet(void)
 {
 	// FIXME
@@ -401,5 +406,5 @@ kmem_malloc(map, size, canwait)
 {
 	if (map != mb_map)
 		panic("kmem_malloc: unknown map");
-	return malloc(size);
+	return (vm_offset_t)malloc(size);
 }

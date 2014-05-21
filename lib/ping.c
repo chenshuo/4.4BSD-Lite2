@@ -23,6 +23,7 @@
 #include <netinet/in_var.h>
 
 void ipintr();
+void updatetime();
 
 void enqueue(struct ifqueue *inq, struct mbuf *m)
 {
@@ -48,6 +49,7 @@ void inject(char* msg, int len)
 {
 	struct mbuf *m = m_devget(msg, len, 0, NULL, NULL);
 	enqueue(&ipintrq, m);
+	updatetime();
 	ipintr();
 }
 

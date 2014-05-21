@@ -26,7 +26,7 @@ struct	ucred ucred0;
 
 void mbinit();
 void domaininit();
-void pigeonattach(int);
+void updatetime();
 
 void setipaddr(const char* name, uint ip)
 {
@@ -52,7 +52,6 @@ void init()
   curproc->p_cred = &cred0;
   curproc->p_ucred = &ucred0;
 
-  pigeonattach(1);
   loopattach(1);
   mbinit();
 
@@ -63,4 +62,5 @@ void init()
   splx(s);
 
   setipaddr("lo0", 0x7f000001);
+  updatetime();
 }

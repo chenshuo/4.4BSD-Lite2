@@ -1,3 +1,8 @@
+#include <stdio.h>
+
+void pigeonattach(int);
+int pigeon_dequeue(char *buf, int len);
+void init();
 void setipaddr(const char* name, unsigned ip);
 void inject(const char* msg, int len);
 
@@ -14,7 +19,6 @@ void dump(const char* buf, int len)
   }
   puts("");
 }
-
 
 void test_ping()
 {
@@ -37,6 +41,7 @@ void test_ping()
 
 int main()
 {
+  pigeonattach(1);
   init();
   setipaddr("pg0", 0xc0a80002);  // 192.168.0.2
 
