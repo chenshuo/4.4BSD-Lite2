@@ -376,7 +376,7 @@ struct	mbuf *m_retryhdr __P((int, int));
 void	m_adj __P((struct mbuf *, int));
 void	m_cat __P((struct mbuf *, struct mbuf *));
 int	m_clalloc __P((int, int));
-void	m_copydata __P((struct mbuf *, int, int, caddr_t));
+int	m_copydata __P((struct mbuf *, int, int, caddr_t));
 void	m_freem __P((struct mbuf *));
 void	m_reclaim __P((void));
 

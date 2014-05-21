@@ -321,7 +321,7 @@ nospace:
  * Copy data from an mbuf chain starting "off" bytes from the beginning,
  * continuing for "len" bytes, into the indicated buffer.
  */
-void
+int
 m_copydata(m, off, len, cp)
 	register struct mbuf *m;
 	register int off;
@@ -329,6 +329,7 @@ m_copydata(m, off, len, cp)
 	caddr_t cp;
 {
 	register unsigned count;
+	caddr_t old_cp = cp;
 
 	if (off < 0 || len < 0)
 		panic("m_copydata");
@@ -342,7 +343,7 @@ m_copydata(m, off, len, cp)
 	}
 	while (len > 0) {
 		if (m == 0)
-			panic("m_copydata");
+			break;  // panic("m_copydata");
 		count = min(m->m_len - off, len);
 		bcopy(mtod(m, caddr_t) + off, cp, count);
 		len -= count;
@@ -350,6 +351,7 @@ m_copydata(m, off, len, cp)
 		off = 0;
 		m = m->m_next;
 	}
+	return cp - old_cp;
 }
 
 /*

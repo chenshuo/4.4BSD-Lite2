@@ -51,4 +51,5 @@ $CC -c lib/stub.c -o objs/stub.o
 
 ar rcs objs/libnetinet.a objs/*.o
 
-gcc -m32 -g tests/init.c -o objs/test_init objs/libnetinet.a
+gcc -m32 -g -Wall tests/init.c -o objs/test_init objs/libnetinet.a
+gcc -m32 -g -Wall tests/pigeon.c -o objs/test_pigeon objs/libnetinet.a

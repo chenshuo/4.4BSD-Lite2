@@ -365,8 +365,9 @@ send:
 		m->m_data += max_linkhdr;
 		m->m_len = hdrlen;
 		if (len <= MHLEN - hdrlen - max_linkhdr) {
-			m_copydata(so->so_snd.sb_mb, off, (int) len,
-			    mtod(m, caddr_t) + hdrlen);
+			if (m_copydata(so->so_snd.sb_mb, off, (int) len,
+					mtod(m, caddr_t) + hdrlen) != len)
+				panic("no enough data");
 			m->m_len += len;
 		} else {
 			m->m_next = m_copy(so->so_snd.sb_mb, off, (int) len);

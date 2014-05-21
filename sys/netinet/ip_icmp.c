@@ -454,7 +454,7 @@ icmp_reflect(m)
 		ia = in_ifaddr;
 	t = IA_SIN(ia)->sin_addr;
 	ip->ip_src = t;
-	ip->ip_ttl = MAXTTL;
+	// ip->ip_ttl = MAXTTL;
 
 	if (optlen > 0) {
 		register u_char *cp;

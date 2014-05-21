@@ -26,6 +26,7 @@ struct	ucred ucred0;
 
 void mbinit();
 void domaininit();
+void pigeonattach(int);
 
 void setipaddr(const char* name, uint ip)
 {
@@ -62,5 +63,4 @@ void init()
   splx(s);
 
   setipaddr("lo0", 0x7f000001);
-  setipaddr("pg0", 0xc0a80002);
 }

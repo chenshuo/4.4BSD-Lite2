@@ -25,6 +25,21 @@
 #include <netinet/ip.h>
 
 struct	ifnet pigeonif;
+struct	ifqueue pigeon_out_queue;
+
+void enqueue(struct ifqueue *inq, struct mbuf *m);
+struct mbuf *dequeue(struct ifqueue *inq);
+
+int pigeon_dequeue(char *buf, int len)
+{
+	int copied = 0;
+	struct mbuf *m = dequeue(&pigeon_out_queue);
+	if (m) {
+		copied = m_copydata(m, 0, len, buf);
+		m_freem(m);
+	}
+	return copied;
+}
 
 int
 pigeonoutput(ifp, m, dst, rt)
@@ -33,7 +48,7 @@ pigeonoutput(ifp, m, dst, rt)
 	struct sockaddr *dst;
 	register struct rtentry *rt;
 {
-	// FIXME
+	enqueue(&pigeon_out_queue, m);
 	return 0;
 }
 
@@ -62,10 +77,11 @@ pigeonioctl(ifp, cmd, data)
 
 void pigeonattach(int n)
 {
+	pigeon_out_queue.ifq_maxlen = IFQ_MAXLEN;
 	register struct ifnet *ifp = &pigeonif;
 	ifp->if_name = "pg";
 	ifp->if_mtu = 1500;
-	ifp->if_flags = IFF_POINTOPOINT;
+	ifp->if_flags = 0;  // IFF_POINTOPOINT;
 	ifp->if_ioctl = pigeonioctl;
 	ifp->if_output = pigeonoutput;
 	ifp->if_type = IFT_PIGEON;
