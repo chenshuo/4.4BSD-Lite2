@@ -180,8 +180,8 @@ soclose(so)
 			    (so->so_state & SS_NBIO))
 				goto drop;
 			while (so->so_state & SS_ISCONNECTED)
-				if (error = tsleep((caddr_t)&so->so_timeo,
-				    PSOCK | PCATCH, netcls, so->so_linger * hz))
+				if ( (error = tsleep((caddr_t)&so->so_timeo,
+				    PSOCK | PCATCH, netcls, so->so_linger * hz)) != 0)
 					break;
 		}
 	}
@@ -352,7 +352,7 @@ sosend(so, addr, uio, top, control, flags)
 #define	snderr(errno)	{ error = errno; splx(s); goto release; }
 
 restart:
-	if (error = sblock(&so->so_snd, SBLOCKWAIT(flags)))
+	if ( (error = sblock(&so->so_snd, SBLOCKWAIT(flags))) != 0)
 		goto out;
 	do {
 		s = splnet();
@@ -371,7 +371,7 @@ restart:
 		space = sbspace(&so->so_snd);
 		if (flags & MSG_OOB)
 			space += 1024;
-		if (atomic && resid > so->so_snd.sb_hiwat ||
+		if ((atomic && resid > so->so_snd.sb_hiwat) ||
 		    clen > so->so_snd.sb_hiwat)
 			snderr(EMSGSIZE);
 		if (space < resid + clen && uio &&
@@ -538,7 +538,7 @@ bad:
 		    (struct mbuf *)0, (struct mbuf *)0);
 
 restart:
-	if (error = sblock(&so->so_rcv, SBLOCKWAIT(flags)))
+	if ( (error = sblock(&so->so_rcv, SBLOCKWAIT(flags))) != 0)
 		return (error);
 	s = splnet();
 
@@ -756,7 +756,7 @@ dontblock:
 				splx(s);
 				return (0);
 			}
-			if (m = so->so_rcv.sb_mb)
+			if ( (m = so->so_rcv.sb_mb) != NULL)
 				nextrecord = m->m_nextpkt;
 		}
 	}

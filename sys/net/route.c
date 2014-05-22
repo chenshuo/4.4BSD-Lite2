@@ -497,7 +497,7 @@ rtinit(ifa, cmd, flags)
 			rt_maskedcopy(dst, deldst, ifa->ifa_netmask);
 			dst = deldst;
 		}
-		if (rt = rtalloc1(dst, 0)) {
+		if ( (rt = rtalloc1(dst, 0)) != NULL) {
 			rt->rt_refcnt--;
 			if (rt->rt_ifa != ifa) {
 				if (m)

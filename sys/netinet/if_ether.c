@@ -306,7 +306,7 @@ arpresolve(ac, rt, m, dst, desten)
 	if (rt)
 		la = (struct llinfo_arp *)rt->rt_llinfo;
 	else {
-		if (la = arplookup(SIN(dst)->sin_addr.s_addr, 1, 0))
+		if ( (la = arplookup(SIN(dst)->sin_addr.s_addr, 1, 0)) != NULL)
 			rt = la->la_rt;
 	}
 	if (la == 0 || rt == 0) {

@@ -839,7 +839,7 @@ rn_walktree(h, f, w)
 			rn = rn->rn_l;
 		next = rn;
 		/* Process leaves */
-		while (rn = base) {
+		while ( (rn = base) != NULL) {
 			base = rn->rn_dupedkey;
 			if (!(rn->rn_flags & RNF_ROOT) && (error = (*f)(rn, w)))
 				return (error);

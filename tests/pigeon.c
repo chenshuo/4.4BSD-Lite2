@@ -1,10 +1,6 @@
 #include <stdio.h>
 
-void pigeonattach(int);
-int pigeon_dequeue(char *buf, int len);
-void init();
-void setipaddr(const char* name, unsigned ip);
-void inject(const char* msg, int len);
+#include "../lib/tcpv2.h"
 
 void dump(const char* buf, int len)
 {

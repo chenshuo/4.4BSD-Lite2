@@ -294,7 +294,7 @@ icmp_input(m, hlen)
 			printf("deliver to protocol %d\n", icp->icmp_ip.ip_p);
 #endif
 		icmpsrc.sin_addr = icp->icmp_ip.ip_dst;
-		if (ctlfunc = inetsw[ip_protox[icp->icmp_ip.ip_p]].pr_ctlinput)
+		if ( (ctlfunc = inetsw[ip_protox[icp->icmp_ip.ip_p]].pr_ctlinput) != NULL)
 			(*ctlfunc)(code, (struct sockaddr *)&icmpsrc,
 			    &icp->icmp_ip);
 		break;
@@ -499,7 +499,7 @@ icmp_reflect(m)
 			    }
 		    }
 		    /* Terminate & pad, if necessary */
-		    if (cnt = opts->m_len % 4) {
+		    if ( (cnt = opts->m_len % 4) != 0) {
 			    for (; cnt < 4; cnt++) {
 				    *(mtod(opts, caddr_t) + opts->m_len) =
 					IPOPT_EOL;

@@ -111,9 +111,9 @@ ether_output(ifp, m0, dst, rt0)
 	if ((ifp->if_flags & (IFF_UP|IFF_RUNNING)) != (IFF_UP|IFF_RUNNING))
 		senderr(ENETDOWN);
 	ifp->if_lastchange = time;
-	if (rt = rt0) {
+	if ( (rt = rt0) != NULL) {
 		if ((rt->rt_flags & RTF_UP) == 0) {
-			if (rt0 = rt = rtalloc1(dst, 1))
+			if ( (rt0 = rt = rtalloc1(dst, 1)) != NULL)
 				rt->rt_refcnt--;
 			else 
 				senderr(EHOSTUNREACH);

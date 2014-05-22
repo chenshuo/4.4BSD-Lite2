@@ -135,7 +135,7 @@ if_attach(ifp)
 	if (socksize < sizeof(*sdl))
 		socksize = sizeof(*sdl);
 	ifasize = sizeof(*ifa) + 2 * socksize;
-	if (ifa = (struct ifaddr *)malloc(ifasize, M_IFADDR, M_WAITOK)) {
+	if ( (ifa = (struct ifaddr *)malloc(ifasize, M_IFADDR, M_WAITOK)) != NULL) {
 		bzero((caddr_t)ifa, ifasize);
 		sdl = (struct sockaddr_dl *)(ifa + 1);
 		sdl->sdl_len = socksize;
@@ -327,7 +327,7 @@ link_rtrequest(cmd, rt, sa)
 	if (cmd != RTM_ADD || ((ifa = rt->rt_ifa) == 0) ||
 	    ((ifp = ifa->ifa_ifp) == 0) || ((dst = rt_key(rt)) == 0))
 		return;
-	if (ifa = ifaof_ifpforaddr(dst, ifp)) {
+	if ( (ifa = ifaof_ifpforaddr(dst, ifp)) != NULL) {
 		IFAFREE(rt->rt_ifa);
 		rt->rt_ifa = ifa;
 		ifa->ifa_refcnt++;
@@ -384,7 +384,7 @@ if_qflush(ifq)
 	register struct mbuf *m, *n;
 
 	n = ifq->ifq_head;
-	while (m = n) {
+	while ( (m = n) != NULL) {
 		n = m->m_act;
 		m_freem(m);
 	}
@@ -490,7 +490,7 @@ ifioctl(so, cmd, data, p)
 		break;
 
 	case SIOCSIFFLAGS:
-		if (error = suser(p->p_ucred, &p->p_acflag))
+		if ( (error = suser(p->p_ucred, &p->p_acflag)) != 0)
 			return (error);
 		if (ifp->if_flags & IFF_UP && (ifr->ifr_flags & IFF_UP) == 0) {
 			int s = splimp();
@@ -509,14 +509,14 @@ ifioctl(so, cmd, data, p)
 		break;
 
 	case SIOCSIFMETRIC:
-		if (error = suser(p->p_ucred, &p->p_acflag))
+		if ( (error = suser(p->p_ucred, &p->p_acflag)) != 0)
 			return (error);
 		ifp->if_metric = ifr->ifr_metric;
 		break;
 
 	case SIOCADDMULTI:
 	case SIOCDELMULTI:
-		if (error = suser(p->p_ucred, &p->p_acflag))
+		if ( (error = suser(p->p_ucred, &p->p_acflag)) != 0)
 			return (error);
 		if (ifp->if_ioctl == NULL)
 			return (EOPNOTSUPP);

@@ -14,11 +14,7 @@
 #include <sys/ioctl.h>
 #include <sys/time.h>
 
-void tunattach(int);
-void init();
-void setipaddr(const char* name, unsigned ip);
-void inject(const char* msg, int len);
-struct socket* listenon(unsigned short port);
+#include "../lib/tcpv2.h"
 
 void pffasttimo(void *);  // run every 200ms
 void pfslowtimo(void *);  // run every 500ms
@@ -118,7 +114,7 @@ int64_t now_ms()
   return (int64_t)tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
 
-int do_timers()
+void do_timers()
 {
   int64_t now = now_ms();
   if (now - fasttimer >= 200)

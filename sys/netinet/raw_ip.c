@@ -100,7 +100,7 @@ rip_input(m)
 			continue;
 		if (last) {
 			struct mbuf *n;
-			if (n = m_copy(m, 0, (int)M_COPYALL)) {
+			if ( (n = m_copy(m, 0, (int)M_COPYALL)) != 0) {
 				if (sbappendaddr(&last->so_rcv,
 				    (struct sockaddr *)&ripsrc, n,
 				    (struct mbuf *)0) == 0)

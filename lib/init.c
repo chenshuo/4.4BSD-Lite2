@@ -1,32 +1,12 @@
-#include <sys/param.h>
-#include <sys/systm.h>
-
-#include <sys/map.h>
-#include <sys/kernel.h>
-#include <sys/proc.h>
-#include <sys/buf.h>
-#include <sys/acct.h>
-#include <sys/wait.h>
-#include <sys/file.h>
-#include <ufs/ufs/quota.h>
-#include <sys/uio.h>
-#include <sys/ioctl.h>
-#include <sys/protosw.h>
-#include <sys/domain.h>
-#include <sys/signalvar.h>
-#include <sys/socket.h>
-#include <sys/socketvar.h>
-
-#include <net/if.h>
-#include <net/route.h>
-#include <netinet/in.h>
+#include "stub.h"
 
 struct	pcred cred0;
 struct	ucred ucred0;
 
-void mbinit();
-void domaininit();
-void updatetime();
+void updatetime()
+{
+  microtime((struct timeval *)&time);
+}
 
 void setipaddr(const char* name, uint ip)
 {

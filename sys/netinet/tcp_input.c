@@ -257,7 +257,7 @@ tcp_input(m, iphlen)
 	ti->ti_x1 = 0;
 	ti->ti_len = (u_short)tlen;
 	HTONS(ti->ti_len);
-	if (ti->ti_sum = in_cksum(m, len)) {
+	if ( (ti->ti_sum = in_cksum(m, len)) != 0) {
 		tcpstat.tcps_rcvbadsum++;
 		goto drop;
 	}
@@ -1126,8 +1126,8 @@ step6:
 	 * Don't look at window if no ACK: TAC's send garbage on first SYN.
 	 */
 	if ((tiflags & TH_ACK) &&
-	    (SEQ_LT(tp->snd_wl1, ti->ti_seq) || tp->snd_wl1 == ti->ti_seq &&
-	    (SEQ_LT(tp->snd_wl2, ti->ti_ack) ||
+	    (SEQ_LT(tp->snd_wl1, ti->ti_seq) ||
+             tp->snd_wl1 == ti->ti_seq && (SEQ_LT(tp->snd_wl2, ti->ti_ack) ||
 	     tp->snd_wl2 == ti->ti_ack && tiwin > tp->snd_wnd))) {
 		/* keep track of pure window updates */
 		if (ti->ti_len == 0 &&

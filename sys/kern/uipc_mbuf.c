@@ -207,7 +207,7 @@ m_freem(m)
 		return;
 	do {
 		MFREE(m, n);
-	} while (m = n);
+	} while ( (m = n) != NULL);
 }
 
 /*
@@ -449,7 +449,7 @@ m_adj(mp, req_len)
 			}
 			count -= m->m_len;
 		}
-		while (m = m->m_next)
+		while ( (m = m->m_next) != NULL)
 			m->m_len = 0;
 	}
 }

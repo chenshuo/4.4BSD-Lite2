@@ -1,26 +1,4 @@
-#include <sys/param.h>
-#include <sys/systm.h>
-
-#include <sys/proc.h>
-#include <sys/mbuf.h>
-#include <sys/buf.h>
-#include <sys/dkstat.h>
-#include <sys/socket.h>
-#include <sys/ioctl.h>
-#include <sys/file.h>
-#include <sys/tty.h>
-#include <sys/kernel.h>
-#include <sys/conf.h>
-
-#include <net/if.h>
-#include <net/if_types.h>
-#include <net/netisr.h>
-#include <net/route.h>
-
-#include <netinet/in.h>
-#include <netinet/in_systm.h>
-#include <netinet/in_var.h>
-#include <netinet/ip.h>
+#include "stub.h"
 
 struct	ifnet tunif;
 

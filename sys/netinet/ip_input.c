@@ -189,7 +189,7 @@ next:
 		}
 		ip = mtod(m, struct ip *);
 	}
-	if (ip->ip_sum = in_cksum(m, hlen)) {
+	if ( (ip->ip_sum = in_cksum(m, hlen)) != 0) {
 		ipstat.ips_badsum++;
 		goto bad;
 	}

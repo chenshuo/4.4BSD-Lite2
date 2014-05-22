@@ -143,7 +143,7 @@ udp_input(m, iphlen)
 		((struct ipovly *)ip)->ih_prev = 0;
 		((struct ipovly *)ip)->ih_x1 = 0;
 		((struct ipovly *)ip)->ih_len = uh->uh_ulen;
-		if (uh->uh_sum = in_cksum(m, len + sizeof (struct ip))) {
+		if ( (uh->uh_sum = in_cksum(m, len + sizeof (struct ip))) != 0) {
 			udpstat.udps_badsum++;
 			m_freem(m);
 			return;
@@ -218,7 +218,7 @@ udp_input(m, iphlen)
 			 * port.  It * assumes that an application will never
 			 * clear these options after setting them.
 			 */
-			if ((last->so_options&(SO_REUSEPORT|SO_REUSEADDR) == 0))
+			if ((last->so_options & (SO_REUSEPORT|SO_REUSEADDR)) == 0)
 				break;
 		}
 

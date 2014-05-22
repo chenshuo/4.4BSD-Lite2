@@ -214,14 +214,14 @@ in_control(so, cmd, data, ifp)
 			if (oia == (struct in_ifaddr *)NULL)
 				return (ENOBUFS);
 			bzero((caddr_t)oia, sizeof *oia);
-			if (ia = in_ifaddr) {
+			if ( (ia = in_ifaddr) != NULL) {
 				for ( ; ia->ia_next; ia = ia->ia_next)
 					continue;
 				ia->ia_next = oia;
 			} else
 				in_ifaddr = oia;
 			ia = oia;
-			if (ifa = ifp->if_addrlist) {
+			if ( (ifa = ifp->if_addrlist) != NULL) {
 				for ( ; ifa->ifa_next; ifa = ifa->ifa_next)
 					continue;
 				ifa->ifa_next = (struct ifaddr *) ia;

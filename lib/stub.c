@@ -26,11 +26,6 @@
 extern void exit(int) __attribute__ ((__noreturn__));
 extern int gettimeofday(struct timeval *, void*);
 
-void updatetime()
-{
-	microtime((struct timeval *)&time);
-}
-
 int splnet(void)
 {
 	// FIXME
