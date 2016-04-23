@@ -152,7 +152,8 @@ int main()
 
   printf("allocted tunnel interface %s\n", ifname);
 
-  listenon(1234);
+  struct socket *server = listenon(1234);
+  struct socket *client = NULL;
 
   struct pollfd pfd = {
     .fd = tun_fd,
@@ -192,6 +193,20 @@ int main()
 
     printf("read  %4d bytes from %s\n", len, ifname);
     inject(buf, len);
+    struct socket* so = acceptfrom(server);
+    if (so)
+    {
+      printf("accepted\n");
+      if (client)
+      {
+        // close
+      }
+      client = so;
+    }
+    if (client)
+    {
+      // read
+    }
   }
   return 0;
 }
