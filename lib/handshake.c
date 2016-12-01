@@ -91,7 +91,8 @@ done:
 void handshake()
 {
 	int port = 1234;
-	listenon(port);
+	struct socket* serverso = listenon(port);
+
 	// client
 	struct socket* so = NULL;
 	socreate(AF_INET, &so, SOCK_STREAM, 0);
@@ -105,7 +106,12 @@ void handshake()
 	sockargs(&nam, (caddr_t)&addr, sizeof addr, MT_SONAME);
 	soconnect(so, nam);
 	m_freem(nam);
+
 	// run
 	ipintr();
+
+	// close
+	soclose(so);
+	soclose(serverso);
 }
 
