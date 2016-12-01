@@ -1,18 +1,65 @@
 #include "stub.h"
 
+// copied from kern/uipc_syscalls.c
+int
+sockargs(mp, buf, buflen, type)
+	struct mbuf **mp;
+	caddr_t buf;
+	int buflen, type;
+{
+	register struct sockaddr *sa;
+	register struct mbuf *m;
+	int error;
+
+	if ((u_int)buflen > MLEN) {
+#ifdef COMPAT_OLDSOCK
+		if (type == MT_SONAME && (u_int)buflen <= 112)
+			buflen = MLEN;		/* unix domain compat. hack */
+		else
+#endif
+		return (EINVAL);
+	}
+	m = m_get(M_WAIT, type);
+	if (m == NULL)
+		return (ENOBUFS);
+	m->m_len = buflen;
+	error = copyin(buf, mtod(m, caddr_t), (u_int)buflen);
+	if (error) {
+		(void) m_free(m);
+		return (error);
+	}
+	*mp = m;
+	if (type == MT_SONAME) {
+		sa = mtod(m, struct sockaddr *);
+
+#if defined(COMPAT_OLDSOCK) && BYTE_ORDER != BIG_ENDIAN
+		if (sa->sa_family == 0 && sa->sa_len < AF_MAX)
+			sa->sa_family = sa->sa_len;
+#endif
+		sa->sa_len = buflen;
+	}
+	return (0);
+}
+
+// util for setup a server socket
 struct socket* listenon(unsigned short port)
 {
-  struct socket* so = NULL;
-  socreate(AF_INET, &so, SOCK_STREAM, 0);
-  struct sockaddr_in addr;
-  bzero(&addr, sizeof addr);
-  addr.sin_len = sizeof addr;
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(port);
-  struct mbuf* nam = m_devget((caddr_t)&addr, sizeof addr, 0, NULL, NULL);
-  sobind(so, nam);
-  solisten(so, 5);
-  return so;
+	// socket()
+	struct socket* so = NULL;
+	socreate(AF_INET, &so, SOCK_STREAM, 0);
+	// bind()
+	struct sockaddr_in addr;
+	bzero(&addr, sizeof addr);
+	addr.sin_len = sizeof addr;
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(port);
+	struct mbuf* nam;
+	sockargs(&nam, (caddr_t)&addr, sizeof addr, MT_SONAME);
+	sobind(so, nam);
+	m_freem(nam);
+	// listen()
+	solisten(so, 5);
+	return so;
 }
 
 struct socket* acceptfrom(struct socket* server)
@@ -43,18 +90,22 @@ done:
 
 void handshake()
 {
-  int port = 1234;
-  listenon(port);
-  struct socket* so = NULL;
-  socreate(AF_INET, &so, SOCK_STREAM, 0);
-  struct sockaddr_in addr;
-  bzero(&addr, sizeof addr);
-  addr.sin_len = sizeof addr;
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(port);
-  addr.sin_addr.s_addr = htonl(0x7f000001);
-  struct mbuf* nam = m_devget((caddr_t)&addr, sizeof addr, 0, NULL, NULL);
-  soconnect(so, nam);
-  ipintr();
+	int port = 1234;
+	listenon(port);
+	// client
+	struct socket* so = NULL;
+	socreate(AF_INET, &so, SOCK_STREAM, 0);
+	struct sockaddr_in addr;
+	bzero(&addr, sizeof addr);
+	addr.sin_len = sizeof addr;
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(port);
+	addr.sin_addr.s_addr = htonl(0x7f000001);
+	struct mbuf* nam;
+	sockargs(&nam, (caddr_t)&addr, sizeof addr, MT_SONAME);
+	soconnect(so, nam);
+	m_freem(nam);
+	// run
+	ipintr();
 }
 
