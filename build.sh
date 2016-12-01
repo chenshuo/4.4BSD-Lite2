@@ -4,6 +4,7 @@ set -x
 
 CC="gcc -g3 -Wall -O0 -m32 -nostdinc -fno-builtin "
 CC="$CC -DKERNEL -DINET -DTCPDEBUG -I sys "
+# CC="$CC -finstrument-functions "
 
 mkdir -p objs
 rm -rf objs/*.o objs/*.a objs/test_*
@@ -52,6 +53,6 @@ $CC -c lib/stub.c -o objs/stub.o
 
 ar rcs objs/libnetinet.a objs/*.o
 
-gcc -m32 -g -Wall tests/init.c -o objs/test_init objs/libnetinet.a
+gcc -m32 -g -Wall tests/init.c tools/trace.c -o objs/test_init objs/libnetinet.a
 gcc -m32 -g -Wall tests/pigeon.c -o objs/test_pigeon objs/libnetinet.a
 gcc -m32 -g -Wall tests/tun.c -o objs/test_tun objs/libnetinet.a

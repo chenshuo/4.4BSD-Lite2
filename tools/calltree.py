@@ -61,18 +61,23 @@ with open('trace.txt') as trace:
     m = CALL.search(line)
     if m:
       if m.group(1) == 'ENTER':
-        # print "  " * indent + m.group(2) + ' {'
+        func_name = get_func_name(m.group(2))
+        # print "  " * indent + func_name + ' {'
         if len(stack) <= indent+1:
           stack.append(None)
         indent += 1
-        stack[indent] = Function(get_func_name(m.group(2)))
+        stack[indent] = Function(func_name)
         stack[indent-1].calls.append(stack[indent])
       else:
         indent -= 1
+        if indent < 0:
+          print line
         # print "  " * indent + '}'
 
 stack[0].Calculate()
 stack[0].Print(0)
+if indent != 0:
+  print "INBALANCE!"
 
 with open('calltree.html', 'w') as out:
   out.write('''<!DOCTYPE html>

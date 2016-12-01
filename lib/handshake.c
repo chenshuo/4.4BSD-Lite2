@@ -107,11 +107,13 @@ void handshake()
 	soconnect(so, nam);
 	m_freem(nam);
 
-	// run
+	// handshaking
 	ipintr();
 
-	// close
+	// close and terminate connection
 	soclose(so);
+	ipintr();
 	soclose(serverso);
+	ipintr();
 }
 

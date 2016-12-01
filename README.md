@@ -18,5 +18,8 @@ This build three executables:
 
 This TCP/IP stack is alive, using tap/tun device on Linux. (WIP)
 
+[Unofficial companion site of _TCP/IP Illustrated vol. 2_](http://chenshuo.github.io/tcpipv2)
+
 ## See also
+
 For running recent FreeBSD TCP/IP stack in user mode, take a look at https://github.com/pkelsey/libuinet and https://github.com/cloudius-systems/osv.
