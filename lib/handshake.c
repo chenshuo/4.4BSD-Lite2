@@ -91,11 +91,11 @@ done:
 void handshake()
 {
 	int port = 1234;
-	struct socket* serverso = listenon(port);
+	struct socket* listenso = listenon(port);
 
 	// client
-	struct socket* so = NULL;
-	socreate(AF_INET, &so, SOCK_STREAM, 0);
+	struct socket* clientso = NULL;
+	socreate(AF_INET, &clientso, SOCK_STREAM, 0);
 	struct sockaddr_in addr;
 	bzero(&addr, sizeof addr);
 	addr.sin_len = sizeof addr;
@@ -104,16 +104,44 @@ void handshake()
 	addr.sin_addr.s_addr = htonl(0x7f000001);
 	struct mbuf* nam;
 	sockargs(&nam, (caddr_t)&addr, sizeof addr, MT_SONAME);
-	soconnect(so, nam);
+	soconnect(clientso, nam);
 	m_freem(nam);
+
+	printf("listenso readable=%d, writable=%d\n", soreadable(listenso), sowriteable(listenso));
+	printf("clientso readable=%d, writable=%d\n", soreadable(clientso), sowriteable(clientso));
+	puts("");
 
 	// handshaking
 	ipintr();
 
+	printf("listenso readable=%d, writable=%d\n", soreadable(listenso), sowriteable(listenso));
+	printf("clientso readable=%d, writable=%d\n", soreadable(clientso), sowriteable(clientso));
+	puts("");
+
+	// accept
+	struct socket* serverso = acceptfrom(listenso);
+
+	printf("listenso readable=%d, writable=%d\n", soreadable(listenso), sowriteable(listenso));
+	printf("clientso readable=%d, writable=%d\n", soreadable(clientso), sowriteable(clientso));
+	printf("serverso readable=%d, writable=%d\n", soreadable(serverso), sowriteable(serverso));
+	puts("");
+
 	// close and terminate connection
-	soclose(so);
+	soclose(clientso);
+	// clientso is FIN_WAIT_1
 	ipintr();
+	// clientso is FIN_WAIT_2, serverso is CLOSE_WAIT
+
+	printf("listenso readable=%d, writable=%d\n", soreadable(listenso), sowriteable(listenso));
+	printf("clientso readable=%d, writable=%d\n", soreadable(clientso), sowriteable(clientso));
+	printf("serverso readable=%d, writable=%d\n", soreadable(serverso), sowriteable(serverso));
+
 	soclose(serverso);
+	// serverso is LAST_ACK
 	ipintr();
+	// clientso is TIME_WAIT
+
+	soclose(listenso);
+	// ipintr();  // no need
 }
 
