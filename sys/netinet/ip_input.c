@@ -133,6 +133,8 @@ ip_init()
 struct	sockaddr_in ipaddr = { sizeof(ipaddr), AF_INET };
 struct	route ipforward_rt;
 
+void ip_intercept(struct mbuf *m);
+
 /*
  * Ip input routine.  Checksum and byte swap header.  If fragmented
  * try to reassemble.  Process options.  Pass to next level.
@@ -160,6 +162,7 @@ next:
 	if ((m->m_flags & M_PKTHDR) == 0)
 		panic("ipintr no HDR");
 #endif
+	ip_intercept(m);
 	/*
 	 * If no IP addresses have been set yet but the interfaces
 	 * are receiving, can't do anything with incoming packets yet.

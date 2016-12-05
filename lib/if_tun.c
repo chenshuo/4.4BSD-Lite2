@@ -2,8 +2,6 @@
 
 struct	ifnet tunif;
 
-extern int tun_fd;
-
 int tun_write(const char *buf, int len);
 
 int

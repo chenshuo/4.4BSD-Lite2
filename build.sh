@@ -47,12 +47,16 @@ $CC -c sys/netinet/udp_usrreq.c -o objs/udp_usrreq.o
 $CC -c lib/handshake.c -o objs/handshake.o
 $CC -c lib/if_pigeon.c -o objs/if_pigeon.o
 $CC -c lib/if_tun.c -o objs/if_tun.o
+$CC -c lib/ip_intercept.c -o objs/ip_intercept.o
 $CC -c lib/init.c -o objs/init.o
 $CC -c lib/ping.c -o objs/ping.o
 $CC -c lib/stub.c -o objs/stub.o
 
+gcc -c -m32 -g -Wall tools/pcap.c -o objs/pcap.o
+gcc -c -m32 -g -Wall tools/trace.c -o objs/trace.o
+
 ar rcs objs/libnetinet.a objs/*.o
 
-gcc -m32 -g -Wall tests/init.c tools/trace.c -o objs/test_init objs/libnetinet.a
+gcc -m32 -g -Wall tests/init.c -o objs/test_init objs/libnetinet.a
 gcc -m32 -g -Wall tests/pigeon.c -o objs/test_pigeon objs/libnetinet.a
 gcc -m32 -g -Wall tests/tun.c -o objs/test_tun objs/libnetinet.a

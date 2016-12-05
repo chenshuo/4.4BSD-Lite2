@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "../lib/tcpv2.h"
+#include "../tools/pcap.h"
 
 void dump(const char* buf, int len)
 {
@@ -31,6 +32,7 @@ void test_ping()
   int len = 0;
   if ( (len = pigeon_dequeue(buf, sizeof buf)) > 0)
   {
+    pcap_write(buf, len, len);
     dump(buf, len);
   }
 }
@@ -41,6 +43,8 @@ int main()
   init();
   setipaddr("pg0", 0xc0a80002);  // 192.168.0.2
 
+  pcap_start("pigeon.pcap");
   test_ping();
+  pcap_stop();
   return 0;
 }

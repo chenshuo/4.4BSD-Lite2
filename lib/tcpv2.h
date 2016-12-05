@@ -1,5 +1,7 @@
 #pragma once
 
+// declares functions in lib/ to be used by main()
+
 // only built-in types in this file
 
 void init();
