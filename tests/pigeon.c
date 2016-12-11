@@ -3,6 +3,8 @@
 #include "../lib/tcpv2.h"
 #include "../tools/pcap.h"
 
+extern int tcp_do_rfc1323;
+
 void dump(const char* buf, int len)
 {
   int i;
@@ -27,12 +29,11 @@ void test_ping()
       "\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x24\x25\x26\x27"
       "\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x30\x31\x32\x33\x34\x35\x36\x37";
   inject(icmp, sizeof icmp);
-  //struct mbuf *m = pigeon_dequeue();
+
   char buf[2048];
   int len = 0;
   if ( (len = pigeon_dequeue(buf, sizeof buf)) > 0)
   {
-    pcap_write(buf, len, len);
     dump(buf, len);
   }
 }
@@ -45,6 +46,10 @@ int main()
 
   pcap_start("pigeon.pcap");
   test_ping();
+
+  tcp_do_rfc1323 = 0;
+  struct socket* clientso = connectto(0xc0a80001, 1234);
+
   pcap_stop();
   return 0;
 }

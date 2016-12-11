@@ -12,6 +12,7 @@ void setipaddr(const char* name, unsigned ip);
 void inject(const char* msg, int len);
 
 struct socket;
+struct socket* connectto(unsigned ip, unsigned short port);
 struct socket* listenon(unsigned short port);
 struct socket* acceptso(struct socket*);
 

@@ -1,6 +1,6 @@
 
 CC = gcc
-CFLAGS = -g3 -ggdb -Wall -O0 -m32 -Wno-parentheses
+CFLAGS = -g3 -ggdb -Wall -O0 -m32 -Werror=implicit-function-declaration
 
 OBJDIR := objs
 
@@ -57,13 +57,15 @@ KERNOBJS := $(addprefix $(OBJDIR)/,$(SRCS:.c=.o))
 
 $(KERNOBJS): KERNFLAGS = -nostdinc -fno-builtin -DKERNEL -DINET -I sys
 
+$(OBJDIR)/lib/handshake.o: CFLAGS += -Wno-parentheses
+
 $(LIB): $(KERNOBJS) $(OBJDIR)/tools/pcap.o
 	ar rcs $@ $^
 
 $(KERNOBJS): | $(OBJDIR)
 
 $(OBJDIR):
-	mkdir $(OBJDIR)
+	mkdir -p $(OBJDIR)
 	mkdir -p $(OBJDIR)/lib
 	mkdir -p $(OBJDIR)/sys/kern
 	mkdir -p $(OBJDIR)/sys/net

@@ -2,6 +2,26 @@
 
 int sockargs(struct mbuf **mp, caddr_t buf, int buflen, int type);
 void puts(const char*);
+void tcp_fasttimo();
+extern int tcp_do_rfc1323;
+
+struct socket* connectto(u_int32_t ip, u_int16_t port)
+{
+	struct socket* clientso = NULL;
+	socreate(AF_INET, &clientso, SOCK_STREAM, 0);
+	struct sockaddr_in addr;
+	bzero(&addr, sizeof addr);
+	addr.sin_len = sizeof addr;
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(port);
+	addr.sin_addr.s_addr = htonl(ip);
+	struct mbuf* nam;
+	sockargs(&nam, (caddr_t)&addr, sizeof addr, MT_SONAME);
+	soconnect(clientso, nam);
+	clientso->so_state |= SS_NBIO;
+	m_freem(nam);
+	return clientso;
+}
 
 // util for setup a server socket
 struct socket* listenon(unsigned short port)
@@ -101,22 +121,11 @@ int readso(struct socket* so, void* buf, int nbyte)
 void handshake()
 {
 	int port = 1234;
+	tcp_do_rfc1323 = 0;
 	struct socket* listenso = listenon(port);
 
 	// client
-	struct socket* clientso = NULL;
-	socreate(AF_INET, &clientso, SOCK_STREAM, 0);
-	struct sockaddr_in addr;
-	bzero(&addr, sizeof addr);
-	addr.sin_len = sizeof addr;
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(port);
-	addr.sin_addr.s_addr = htonl(0x7f000001);
-	struct mbuf* nam;
-	sockargs(&nam, (caddr_t)&addr, sizeof addr, MT_SONAME);
-	soconnect(clientso, nam);
-	clientso->so_state |= SS_NBIO;
-	m_freem(nam);
+	struct socket* clientso = connectto(0x7f000001, port);
 
 	printf("listenso readable=%d, writable=%d\n", soreadable(listenso), sowriteable(listenso));
 	printf("clientso readable=%d, writable=%d\n", soreadable(clientso), sowriteable(clientso));
@@ -147,16 +156,15 @@ void handshake()
 	ipintr();
 	tcp_fasttimo();
 	ipintr();
-	tcp_fasttimo();
-	ipintr();
 
 	printf("listenso readable=%d, writable=%d\n", soreadable(listenso), sowriteable(listenso));
 	printf("clientso readable=%d, writable=%d\n", soreadable(clientso), sowriteable(clientso));
 	printf("serverso readable=%d, writable=%d\n", soreadable(serverso), sowriteable(serverso));
 	puts("");
 
-	int nr = readso(serverso, buf, sizeof buf);
+	int nr = readso(serverso, buf, 7000);
 	printf("nr = %d\n", nr);
+	ipintr();
 
 	printf("listenso readable=%d, writable=%d\n", soreadable(listenso), sowriteable(listenso));
 	printf("clientso readable=%d, writable=%d\n", soreadable(clientso), sowriteable(clientso));

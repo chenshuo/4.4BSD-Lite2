@@ -4,6 +4,8 @@
 
 #include "stub.h"
 
+extern void ip_intercept(struct mbuf *m);
+
 struct	ifnet pigeonif;
 struct	ifqueue pigeon_out_queue;
 
@@ -25,6 +27,7 @@ pigeonoutput(ifp, m, dst, rt)
 	struct sockaddr *dst;
 	register struct rtentry *rt;
 {
+	ip_intercept(m);
 	enqueue(&pigeon_out_queue, m);
 	return 0;
 }
