@@ -15,8 +15,14 @@ struct socket;
 struct socket* connectto(unsigned ip, unsigned short port);
 struct socket* listenon(unsigned short port);
 struct socket* acceptso(struct socket*);
+int writeso(struct socket* so, void* buf, int nbyte);
+int readso(struct socket* so, void* buf, int nbyte);
 
 void pigeonattach(int);
 int pigeon_dequeue(char *buf, int len);
 
 void tunattach(int);
+
+// defined in sys/
+void ipintr();
+void soclose(struct socket*);

@@ -4,7 +4,7 @@ CFLAGS = -g3 -ggdb -Wall -O0 -m32 -Werror=implicit-function-declaration
 
 OBJDIR := objs
 
-BINS := test_init test_pigeon test_tun
+BINS := test_init test_pigeon test_self test_tun
 
 SRCS= \
      sys/kern/kern_subr.c \

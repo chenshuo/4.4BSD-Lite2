@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "../lib/tcpv2.h"
 #include "../tools/pcap.h"
 
