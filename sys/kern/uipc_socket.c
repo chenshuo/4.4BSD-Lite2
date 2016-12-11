@@ -346,7 +346,8 @@ sosend(so, addr, uio, top, control, flags)
 	dontroute =
 	    (flags & MSG_DONTROUTE) && (so->so_options & SO_DONTROUTE) == 0 &&
 	    (so->so_proto->pr_flags & PR_ATOMIC);
-	p->p_stats->p_ru.ru_msgsnd++;
+	if (p->p_stats)
+		p->p_stats->p_ru.ru_msgsnd++;
 	if (control)
 		clen = control->m_len;
 #define	snderr(errno)	{ error = errno; splx(s); goto release; }
@@ -601,7 +602,7 @@ restart:
 		goto restart;
 	}
 dontblock:
-	if (uio->uio_procp)
+	if (uio->uio_procp->p_stats)
 		uio->uio_procp->p_stats->p_ru.ru_msgrcv++;
 	nextrecord = m->m_nextpkt;
 	if (pr->pr_flags & PR_ADDR) {

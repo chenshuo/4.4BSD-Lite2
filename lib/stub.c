@@ -8,6 +8,7 @@
 #include <sys/acct.h>
 #include <sys/wait.h>
 #include <sys/file.h>
+#include <sys/mbuf.h>
 #include <ufs/ufs/quota.h>
 #include <sys/uio.h>
 #include <sys/ioctl.h>
@@ -323,6 +324,49 @@ void
 selwakeup(sip)
 	register struct selinfo *sip;
 {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// sys/kern/uipc_syscalls.c
+//////////////////////////////////////////////////////////////////////////////
+int
+sockargs(mp, buf, buflen, type)
+	struct mbuf **mp;
+	caddr_t buf;
+	int buflen, type;
+{
+	register struct sockaddr *sa;
+	register struct mbuf *m;
+	int error;
+
+	if ((u_int)buflen > MLEN) {
+#ifdef COMPAT_OLDSOCK
+		if (type == MT_SONAME && (u_int)buflen <= 112)
+			buflen = MLEN;		/* unix domain compat. hack */
+		else
+#endif
+		return (EINVAL);
+	}
+	m = m_get(M_WAIT, type);
+	if (m == NULL)
+		return (ENOBUFS);
+	m->m_len = buflen;
+	error = copyin(buf, mtod(m, caddr_t), (u_int)buflen);
+	if (error) {
+		(void) m_free(m);
+		return (error);
+	}
+	*mp = m;
+	if (type == MT_SONAME) {
+		sa = mtod(m, struct sockaddr *);
+
+#if defined(COMPAT_OLDSOCK) && BYTE_ORDER != BIG_ENDIAN
+		if (sa->sa_family == 0 && sa->sa_len < AF_MAX)
+			sa->sa_family = sa->sa_len;
+#endif
+		sa->sa_len = buflen;
+	}
+	return (0);
 }
 
 //////////////////////////////////////////////////////////////////////////////

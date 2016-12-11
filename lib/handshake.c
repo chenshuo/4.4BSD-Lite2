@@ -1,45 +1,7 @@
 #include "stub.h"
 
-// copied from kern/uipc_syscalls.c
-int
-sockargs(mp, buf, buflen, type)
-	struct mbuf **mp;
-	caddr_t buf;
-	int buflen, type;
-{
-	register struct sockaddr *sa;
-	register struct mbuf *m;
-	int error;
-
-	if ((u_int)buflen > MLEN) {
-#ifdef COMPAT_OLDSOCK
-		if (type == MT_SONAME && (u_int)buflen <= 112)
-			buflen = MLEN;		/* unix domain compat. hack */
-		else
-#endif
-		return (EINVAL);
-	}
-	m = m_get(M_WAIT, type);
-	if (m == NULL)
-		return (ENOBUFS);
-	m->m_len = buflen;
-	error = copyin(buf, mtod(m, caddr_t), (u_int)buflen);
-	if (error) {
-		(void) m_free(m);
-		return (error);
-	}
-	*mp = m;
-	if (type == MT_SONAME) {
-		sa = mtod(m, struct sockaddr *);
-
-#if defined(COMPAT_OLDSOCK) && BYTE_ORDER != BIG_ENDIAN
-		if (sa->sa_family == 0 && sa->sa_len < AF_MAX)
-			sa->sa_family = sa->sa_len;
-#endif
-		sa->sa_len = buflen;
-	}
-	return (0);
-}
+int sockargs(struct mbuf **mp, caddr_t buf, int buflen, int type);
+void puts(const char*);
 
 // util for setup a server socket
 struct socket* listenon(unsigned short port)
@@ -62,7 +24,7 @@ struct socket* listenon(unsigned short port)
 	return so;
 }
 
-struct socket* acceptfrom(struct socket* server)
+struct socket* acceptso(struct socket* server)
 {
 //	if ((so->so_options & SO_ACCEPTCONN) == 0)
 //		return (EINVAL);
@@ -86,6 +48,54 @@ struct socket* acceptfrom(struct socket* server)
 done:
 	splx(s);
 	return so;
+}
+
+int writeso(struct socket* so, void* buf, int nbyte)
+{
+	struct uio auio;
+	struct iovec aiov;
+	long cnt = nbyte, error = 0;
+	aiov.iov_base = (caddr_t)buf;
+	aiov.iov_len = nbyte;
+	auio.uio_iov = &aiov;
+	auio.uio_iovcnt = 1;
+	auio.uio_resid = nbyte;
+	auio.uio_rw = UIO_WRITE;
+	auio.uio_segflg = UIO_USERSPACE;
+	auio.uio_procp = curproc;
+	if (error = sosend(so, (struct mbuf *)0,
+		&auio, (struct mbuf *)0, (struct mbuf *)0, 0)) {
+		if (auio.uio_resid != cnt && (error == ERESTART ||
+		    error == EINTR || error == EWOULDBLOCK))
+			error = 0;
+		//if (error == EPIPE)
+		//	psignal(p, SIGPIPE);
+	}
+	cnt -= auio.uio_resid;
+	return cnt;
+}
+
+int readso(struct socket* so, void* buf, int nbyte)
+{
+	struct uio auio;
+	struct iovec aiov;
+	long cnt = nbyte, error = 0;
+	aiov.iov_base = (caddr_t)buf;
+	aiov.iov_len = nbyte;
+	auio.uio_iov = &aiov;
+	auio.uio_iovcnt = 1;
+	auio.uio_resid = nbyte;
+	auio.uio_rw = UIO_READ;
+	auio.uio_segflg = UIO_USERSPACE;
+	auio.uio_procp = curproc;
+	if (error = soreceive(so, (struct mbuf **)0,
+		&auio, (struct mbuf **)0, (struct mbuf **)0, 0)) {
+		if (auio.uio_resid != cnt && (error == ERESTART ||
+		    error == EINTR || error == EWOULDBLOCK))
+			error = 0;
+	}
+	cnt -= auio.uio_resid;
+	return cnt;
 }
 
 void handshake()
@@ -119,7 +129,25 @@ void handshake()
 	puts("");
 
 	// accept
-	struct socket* serverso = acceptfrom(listenso);
+	struct socket* serverso = acceptso(listenso);
+
+	printf("listenso readable=%d, writable=%d\n", soreadable(listenso), sowriteable(listenso));
+	printf("clientso readable=%d, writable=%d\n", soreadable(clientso), sowriteable(clientso));
+	printf("serverso readable=%d, writable=%d\n", soreadable(serverso), sowriteable(serverso));
+	puts("");
+
+	int nw = writeso(clientso, "hello", 5);
+	printf("nw = %d\n", nw);
+	ipintr();
+
+	printf("listenso readable=%d, writable=%d\n", soreadable(listenso), sowriteable(listenso));
+	printf("clientso readable=%d, writable=%d\n", soreadable(clientso), sowriteable(clientso));
+	printf("serverso readable=%d, writable=%d\n", soreadable(serverso), sowriteable(serverso));
+	puts("");
+
+	char buf[1024];
+	int nr = readso(serverso, buf, sizeof buf);
+	printf("nr = %d\n", nr);
 
 	printf("listenso readable=%d, writable=%d\n", soreadable(listenso), sowriteable(listenso));
 	printf("clientso readable=%d, writable=%d\n", soreadable(clientso), sowriteable(clientso));

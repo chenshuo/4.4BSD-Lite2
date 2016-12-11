@@ -193,7 +193,7 @@ int main()
 
     printf("read  %4d bytes from %s\n", len, ifname);
     inject(buf, len);
-    struct socket* so = acceptfrom(server);
+    struct socket* so = acceptso(server);
     if (so)
     {
       printf("accepted\n");
