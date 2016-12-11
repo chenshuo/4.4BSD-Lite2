@@ -115,6 +115,7 @@ void handshake()
 	struct mbuf* nam;
 	sockargs(&nam, (caddr_t)&addr, sizeof addr, MT_SONAME);
 	soconnect(clientso, nam);
+	clientso->so_state |= SS_NBIO;
 	m_freem(nam);
 
 	printf("listenso readable=%d, writable=%d\n", soreadable(listenso), sowriteable(listenso));
@@ -137,8 +138,16 @@ void handshake()
 	puts("");
 
 	char buf[20480];
-	int nw = writeso(clientso, buf, 1024);
+	int nw = writeso(clientso, buf, 10240);
 	printf("nw = %d\n", nw);
+	ipintr();
+	tcp_fasttimo();
+	ipintr();
+	tcp_fasttimo();
+	ipintr();
+	tcp_fasttimo();
+	ipintr();
+	tcp_fasttimo();
 	ipintr();
 
 	printf("listenso readable=%d, writable=%d\n", soreadable(listenso), sowriteable(listenso));
