@@ -1,6 +1,6 @@
 
 CC = gcc
-CFLAGS = -g -Wall -O0 -m32 -Wno-parentheses
+CFLAGS = -g3 -ggdb -Wall -O0 -m32 -Wno-parentheses
 
 OBJDIR := objs
 

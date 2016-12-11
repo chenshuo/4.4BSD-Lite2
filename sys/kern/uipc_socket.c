@@ -326,7 +326,7 @@ sosend(so, addr, uio, top, control, flags)
 	struct proc *p = curproc;		/* XXX */
 	struct mbuf **mp;
 	register struct mbuf *m;
-	register long space, len, resid;
+	/*register*/ long space, len, resid;
 	int clen = 0, error, s, dontroute, mlen;
 	int atomic = sosendallatonce(so) || top;
 

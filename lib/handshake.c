@@ -136,7 +136,8 @@ void handshake()
 	printf("serverso readable=%d, writable=%d\n", soreadable(serverso), sowriteable(serverso));
 	puts("");
 
-	int nw = writeso(clientso, "hello", 5);
+	char buf[20480];
+	int nw = writeso(clientso, buf, 1024);
 	printf("nw = %d\n", nw);
 	ipintr();
 
@@ -145,7 +146,6 @@ void handshake()
 	printf("serverso readable=%d, writable=%d\n", soreadable(serverso), sowriteable(serverso));
 	puts("");
 
-	char buf[1024];
 	int nr = readso(serverso, buf, sizeof buf);
 	printf("nr = %d\n", nr);
 
