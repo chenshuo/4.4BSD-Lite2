@@ -278,6 +278,12 @@ void panic(const char *fmt, ...)
 {
 	printf("panic: ");
 	// FIXME
+	/*
+	va_list args;
+	va_start(args, fmt);
+	vprintf(fmt, args);
+	va_end(args);
+	*/
 	exit(1);
 }
 
@@ -421,6 +427,9 @@ rt_newaddrmsg(cmd, ifa, error, rt)
 struct vm_map mb_map_0;
 vm_map_t	mb_map = &mb_map_0;
 
+void* mcl_maxaddr;
+void* mcl_next;
+
 /*
  * Allocate wired-down memory in the kernel's address map for the higher
  * level kernel memory allocator (kern/kern_malloc.c).  We cannot use
@@ -445,5 +454,25 @@ kmem_malloc(map, size, canwait)
 {
 	if (map != mb_map)
 		panic("kmem_malloc: unknown map");
-	return (vm_offset_t)malloc(size);
+	if (size != CLBYTES)
+		panic("kmem_malloc: unsupported size");
+	if (mcl_next + size >= mcl_maxaddr)
+		panic("kmem_malloc: memory exceeds");
+	vm_offset_t ret = mcl_next;
+	mcl_next += size;
+
+	return ret;
 }
+
+void cpu_startup()
+{
+	/*
+	 * Finally, allocate mbuf pool.  Since mclrefcnt is an off-size
+	 * we use the more space efficient malloc in place of kmem_alloc.
+	 */
+	mclrefcnt = (char *)malloc(NMBCLUSTERS+CLBYTES/MCLBYTES);
+	bzero(mclrefcnt, NMBCLUSTERS+CLBYTES/MCLBYTES);
+	mcl_next = mbutl = memalign(CLBYTES, NMBCLUSTERS * CLBYTES);
+	mcl_maxaddr = mcl_next + NMBCLUSTERS * CLBYTES;
+}
+

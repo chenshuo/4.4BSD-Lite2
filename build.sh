@@ -2,7 +2,7 @@
 
 set -x
 
-CC="gcc -g3 -Wall -O0 -m32 -nostdinc -fno-builtin "
+CC="gcc -g3 -Wall -O0 -m32 -nostdinc -fno-builtin -fcommon"
 CC="$CC -DKERNEL -DINET -DTCPDEBUG -I sys "
 # CC="$CC -finstrument-functions "
 

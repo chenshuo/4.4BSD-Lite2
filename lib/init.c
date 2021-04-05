@@ -27,29 +27,14 @@ void setipaddr(const char* name, uint ip)
   sofree(so);  // FIXME: this doesn't free memory
 }
 
-void cpu_startup()
-{
-        /*
-         * Finally, allocate mbuf pool.  Since mclrefcnt is an off-size
-         * we use the more space efficient malloc in place of kmem_alloc.
-         */
-        mclrefcnt = (char *)malloc(NMBCLUSTERS+CLBYTES/MCLBYTES,
-                                   M_MBUF, M_NOWAIT);
-        bzero(mclrefcnt, NMBCLUSTERS+CLBYTES/MCLBYTES);
-/*
-        mb_map = kmem_suballoc(kernel_map, (vm_offset_t)&mbutl, &maxaddr,
-                               VM_MBUF_SIZE, FALSE);
-*/
-}
-
 void init()
 {
   curproc->p_cred = &cred0;
   curproc->p_ucred = &ucred0;
 
   loopattach(1);
-  mbinit();
   cpu_startup();
+  mbinit();
 
   int s = splimp();
   ifinit();

@@ -8,11 +8,12 @@ This is not a fork of https://github.com/sergev/4.4BSD-Lite2, which contains the
 ## How to build and play
 
 ```shell
-$ ./build.sh
+$ make
 ```
 
-This build three executables:
+This build a few executables:
 * `objs/test_init`  TCP three-way handshake, you can step through code with `GDB`
+* `objs/test_self`  TCP self-connection
 * `objs/test_pigeon`  ICMP echo request/response
 * `objs/test_tun`  Connect to host with TAP/TUN device. (TODO: more instructions)
 

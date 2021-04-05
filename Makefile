@@ -1,6 +1,6 @@
 
 CC = gcc
-CFLAGS = -g3 -ggdb -Wall -O0 -m32 -Werror=implicit-function-declaration
+CFLAGS = -g3 -ggdb -Wall -O0 -m32 -Werror=implicit-function-declaration -fcommon
 
 OBJDIR := objs
 
@@ -43,7 +43,7 @@ SRCS= \
      lib/ping.c \
      lib/stub.c
 
-LIB = $(OBJDIR)/libkern.a 
+LIB = $(OBJDIR)/libkern.a
 
 all: $(addprefix $(OBJDIR)/,$(BINS))
 

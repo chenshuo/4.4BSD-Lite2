@@ -32,6 +32,7 @@
 #include <netinet/ip_var.h>
 
 // defined in lib
+void cpu_startup();
 void enqueue(struct ifqueue *inq, struct mbuf *m);
 struct mbuf *dequeue(struct ifqueue *inq);
 void updatetime();
