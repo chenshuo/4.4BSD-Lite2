@@ -118,6 +118,11 @@ int readso(struct socket* so, void* buf, int nbyte)
 	return cnt;
 }
 
+int issoreadable(struct socket* so)
+{
+	return soreadable(so);
+}
+
 void handshake()
 {
 	int port = 1234;

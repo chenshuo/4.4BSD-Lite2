@@ -134,8 +134,34 @@ int64_t min(int64_t a, int64_t b)
   return a < b ? a : b;
 }
 
-int main()
+enum ServerMode {
+  CLOSE,    // close client connections
+  ACCEPT,   // accept client connections, but don't read data.
+  DISCARD,  // discard data
+  ECHO,     // echo back data
+};
+
+int main(int argc, char* argv[])
 {
+  enum ServerMode mode = DISCARD;
+  if (argc > 1) {
+    if (strcmp(argv[1], "-a") == 0) {
+      mode = ACCEPT;
+    } else if (strcmp(argv[1], "-c") == 0) {
+      mode = CLOSE;
+    } else if (strcmp(argv[1], "-d") == 0) {
+      mode = DISCARD;
+    } else if (strcmp(argv[1], "-e") == 0) {
+      mode = ECHO;
+    } else {
+      goto usage;
+    }
+  } else {
+usage:
+    printf("Usage: test_run -a or -c or -d or -e\n");
+    return 0;
+  }
+
   tunattach(1);
   init();
   setipaddr("tun0", 0xc0a80002);  // 192.168.0.2
@@ -152,8 +178,10 @@ int main()
 
   printf("allocted tunnel interface %s\n", ifname);
 
-  struct socket *server = listenon(1234);
+  int port = 1234;
+  struct socket *server = listenon(port);
   struct socket *client = NULL;
+  printf("listen on port %d\n", port);
 
   struct pollfd pfd = {
     .fd = tun_fd,
@@ -196,16 +224,33 @@ int main()
     struct socket* so = acceptso(server);
     if (so)
     {
-      printf("accepted\n");
-      if (client)
-      {
-        // close
+      if (mode == CLOSE) {
+        printf("close\n");
+        soclose(so);
+      } else {
+        printf("accept\n");
+        // if (client)
+        //   soclose(client);
+        client = so;
       }
-      client = so;
     }
-    if (client)
-    {
-      // read
+    if (mode == DISCARD || mode == ECHO) {
+      if (client && issoreadable(client)) {
+        char buf[1024];
+        int nr = readso(client, buf, sizeof buf);
+        if (nr > 0) {
+          printf("readso %d: ", nr);
+          fwrite(buf, 1, nr, stdout);
+          if (mode == ECHO) {
+            int nw = writeso(client, buf, nr);
+            printf("writeso %d\n", nw);
+          }
+        } else {
+          printf("close\n");
+          soclose(client);
+          client = NULL;
+        }
+      }
     }
   }
   return 0;

@@ -15,7 +15,9 @@ This build a few executables:
 * `objs/test_init`  TCP three-way handshake, you can step through code with `GDB`
 * `objs/test_self`  TCP self-connection
 * `objs/test_pigeon`  ICMP echo request/response
-* `objs/test_tun`  Connect to host with TAP/TUN device. (TODO: more instructions)
+* `objs/test_tun`  Connect to host with TAP/TUN device.
+    * BSD stack is attached to `tun0`, its IP address is 192.168.0.2, listens on port 1234.
+    * Try `ping 192.168.0.2` or `nc 192.168.0.2 1234`, also watch the packets with `tcpdump -n -i tun0`.
 
 This TCP/IP stack is alive, using tap/tun device on Linux. (WIP)
 

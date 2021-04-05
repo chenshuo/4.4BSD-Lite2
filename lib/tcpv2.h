@@ -17,6 +17,7 @@ struct socket* listenon(unsigned short port);
 struct socket* acceptso(struct socket*);
 int writeso(struct socket* so, void* buf, int nbyte);
 int readso(struct socket* so, void* buf, int nbyte);
+int issoreadable(struct socket* so);
 
 void pigeonattach(int);
 int pigeon_dequeue(char *buf, int len);
